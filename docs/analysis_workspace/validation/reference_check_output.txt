@@ -1,0 +1,211 @@
+total reference records checked: 152681
+listing lines indexed: 355346
+unparseable listing lines: 0
+
+Counters:
+  computed_call_ok: 5074
+  computed_call_term_ok: 3
+  computed_jmp_ok: 720
+  cond_jump_ok: 28189
+  data_ref_dataflow_DATA: 374
+  data_ref_dataflow_READ: 745
+  data_ref_dataflow_READ_WRITE: 218
+  data_ref_dataflow_WRITE: 19
+  data_ref_fs_segment_READ: 520
+  data_ref_fs_segment_WRITE: 1179
+  data_ref_textual_ok_DATA: 27183
+  data_ref_textual_ok_INDIRECTION: 31
+  data_ref_textual_ok_PARAM: 1
+  data_ref_textual_ok_READ: 29333
+  data_ref_textual_ok_READ_WRITE: 569
+  data_ref_textual_ok_WRITE: 20232
+  from_not_hex: 1
+  incoming_with_from_function_set: 13114
+  mismatch_dataflow_DATA: 374
+  mismatch_dataflow_READ: 745
+  mismatch_dataflow_READ_WRITE: 218
+  mismatch_dataflow_WRITE: 19
+  mismatch_stackdataflow_DATA: 2509
+  mismatch_stackdataflow_READ: 63
+  mismatch_stackdataflow_READ_WRITE: 1
+  mismatch_stackdataflow_WRITE: 247
+  no_listing_line_COMPUTED_CALL: 1
+  no_listing_line_DATA: 3263
+  no_listing_line_EXTERNAL: 1
+  no_listing_line_UNCONDITIONAL_CALL: 1283
+  stack_dataflow_DATA: 2509
+  stack_dataflow_READ: 63
+  stack_dataflow_READ_WRITE: 1
+  stack_dataflow_WRITE: 247
+  uncond_call_direct: 25260
+  uncond_call_tail_jmp: 1227
+  uncond_jmp_ok: 4436
+
+Mnemonics observed per reference_type:
+  COMPUTED_CALL (5074):
+    CALL: 5074
+  COMPUTED_CALL_TERMINATOR (3):
+    CALL: 3
+  COMPUTED_JUMP (720):
+    JMP: 720
+  CONDITIONAL_JUMP (28189):
+    JZ: 15702
+    JNZ: 7932
+    JNS: 1459
+    JC: 1034
+    JNC: 528
+    JA: 490
+    JBE: 284
+    JS: 200
+    JL: 193
+    JG: 166
+    JLE: 123
+    JGE: 56
+    JP: 14
+    JNP: 6
+    JECXZ: 1
+    JNO: 1
+  DATA (30066):
+    LEA: 12394
+    PUSH: 8881
+    MOV: 6231
+    CMPXCHG.LOCK: 1008
+    XCHG: 901
+    MOVUPS: 84
+    JMP: 84
+    XADD.LOCK: 78
+    CMP: 74
+    MOVZX: 62
+    TEST: 36
+    OR: 33
+    ADD: 31
+    MUL: 24
+    MOVQ: 22
+    FSTP: 18
+    AND: 13
+    MULSD: 12
+    MOVLPD: 11
+    MOVAPD: 10
+    CMOVNC: 9
+    ADDPD: 8
+    XOR: 7
+    POP: 6
+    MOVSX: 6
+    ADDSD: 4
+    FNSTCW: 3
+    FLDCW: 3
+    SUB: 2
+    FSTCW: 2
+    FLD: 2
+    FST: 2
+    MOVSD.REP: 2
+    DEC: 1
+    MOVSD: 1
+    FISTTP: 1
+  INDIRECTION (31):
+    JMP: 31
+  PARAM (1):
+    MOV: 1
+  READ (30661):
+    MOV: 19341
+    CALL: 4282
+    PUSH: 3398
+    CMP: 1554
+    TEST: 1037
+    MOVUPS: 189
+    MOVZX: 187
+    MOVLPD: 87
+    OR: 71
+    FLD: 66
+    SUB: 64
+    AND: 44
+    MOVQ: 41
+    ADD: 40
+    XOR: 34
+    MOVAPD: 28
+    CMOVNZ: 20
+    SBB: 15
+    IMUL: 15
+    MOVSD: 13
+    BT: 13
+    DIV: 13
+    MUL: 12
+    MULSD: 11
+    ANDPD: 11
+    ADC: 10
+    MOVSX: 10
+    SUBSD: 7
+    ADDSD: 5
+    LDMXCSR: 5
+    FLDCW: 5
+    MOVSD.REP: 4
+    FMUL: 4
+    JMP: 3
+    COMISD: 3
+    FCOMP: 3
+    FLDENV: 3
+    CMOVZ: 2
+    CMOVC: 2
+    CVTTSS2SI: 2
+    ORPD: 2
+    MOVSW: 1
+    FILD: 1
+    FRSTOR: 1
+    FADD: 1
+    CMPNLEPD: 1
+  READ_WRITE (788):
+    AND: 181
+    INC: 157
+    XCHG: 120
+    SUB: 100
+    XADD.LOCK: 85
+    INC.LOCK: 45
+    XOR: 44
+    ADD: 17
+    CMPXCHG.LOCK: 16
+    OR: 10
+    DEC: 5
+    ADC: 4
+    DEC.LOCK: 2
+    NEG: 1
+    SHL: 1
+  UNCONDITIONAL_CALL (26487):
+    CALL: 25260
+    JMP: 1227
+  UNCONDITIONAL_JUMP (4436):
+    JMP: 4436
+  WRITE (21677):
+    MOV: 20367
+    MOVUPS: 774
+    MOVLPD: 263
+    MOVQ: 160
+    FSTP: 26
+    SETNZ: 23
+    SETZ: 12
+    STMXCSR: 11
+    MOVSD: 9
+    MOVAPS: 6
+    POP: 5
+    FST: 4
+    FISTP: 3
+    FNSTSW: 3
+    FSTCW: 3
+    FNSTENV: 3
+    MOVSD.REP: 2
+    SETC: 1
+    FSAVE: 1
+    FSTSW: 1
+
+'to' value styles per reference_type:
+  COMPUTED_CALL: {'other': 4779, 'hex32': 295}
+  COMPUTED_CALL_TERMINATOR: {'other': 3}
+  COMPUTED_JUMP: {'hex32': 689, 'other': 31}
+  CONDITIONAL_JUMP: {'hex32': 28189}
+  DATA: {'hex32': 15027, 'stack': 15039}
+  INDIRECTION: {'hex32': 31}
+  PARAM: {'hex32': 1}
+  READ: {'hex32': 10186, 'stack': 20475}
+  READ_WRITE: {'hex32': 253, 'stack': 535}
+  UNCONDITIONAL_CALL: {'hex32': 26487}
+  UNCONDITIONAL_JUMP: {'hex32': 4436}
+  WRITE: {'stack': 19205, 'hex32': 2472}

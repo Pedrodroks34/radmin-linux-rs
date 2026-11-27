@@ -1,0 +1,21 @@
+call sites targeting 0041f710 (is_call=true, CALL types): 1
+  0041b268  UNCONDITIONAL_CALL           from_function=FUN_0041b1e0
+unique caller functions: 1
+==========
+call sites targeting 0041fa80 (is_call=true, CALL types): 2
+  0041c3c0  UNCONDITIONAL_CALL           from_function=FUN_0041c300
+  0041c638  UNCONDITIONAL_CALL           from_function=FUN_0041c510
+unique caller functions: 2
+==========
+call sites targeting 00420b80 (is_call=true, CALL types): 2
+  0041f6bd  UNCONDITIONAL_CALL           from_function=FUN_0041f450
+  00420b52  UNCONDITIONAL_CALL           from_function=FUN_00420b30
+unique caller functions: 2
+==========
+call sites targeting 0041f110 (is_call=true, CALL types): 0
+unique caller functions: 0
+==========
+call sites targeting 0041f450 (is_call=true, CALL types): 1
+  0041f3e0  UNCONDITIONAL_CALL           from_function=FUN_0041f110
+unique caller functions: 1
+==========

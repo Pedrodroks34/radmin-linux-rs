@@ -13,7 +13,21 @@ pub const RADMIN_SRP1536_MODULUS_LEN: usize = 192;
 
 pub const RADMIN_SRP_GENERATOR: u8 = 5;
 
-pub const RADMIN_SRP_K: u32 = 3;
+/// Chave criptográfica k = SHA-1(N ‖ PAD192(g)) conforme especificação SRP-6a do binário oficial.
+/// Substitui o valor estático k=3 por um valor derivado dinamicamente do módulo N e gerador g.
+pub fn srp_k() -> Result<BigNum, ControlHandshakeError> {
+    let n_bytes = BigNum::from_hex_str(RADMIN_SRP1536_PRIME_HEX)
+        .map_err(|e| ControlHandshakeError::CryptoError(format!("falha ao carregar N: {e}")))?;
+    let g_bytes = [RADMIN_SRP_GENERATOR];
+    let mut pad_g = vec![0u8; RADMIN_SRP1536_MODULUS_LEN - g_bytes.len()];
+    pad_g.extend_from_slice(&g_bytes);
+    let mut input = Vec::with_capacity(n_bytes.to_vec().len() + pad_g.len());
+    input.extend_from_slice(&n_bytes.to_vec());
+    input.extend_from_slice(&pad_g);
+    let k_hash = sha1(&input);
+    BigNum::from_slice(&k_hash)
+        .map_err(|e| ControlHandshakeError::CryptoError(format!("falha ao criar k: {e}")))
+}
 
 pub const RADMIN_SRP_DIGEST_LEN: usize = 20;
 
@@ -152,6 +166,15 @@ pub fn encode_identity(username: &str) -> Vec<u8> {
     out
 }
 
+pub fn encode_identity_le(username: &str) -> Vec<u8> {
+    let mut out = Vec::with_capacity(username.len() * 2);
+    for c in username.encode_utf16() {
+        out.push((c & 0xFF) as u8);
+        out.push((c >> 8) as u8);
+    }
+    out
+}
+
 #[allow(clippy::chunks_exact_to_as_chunks)]
 pub fn decode_identity(payload: &[u8]) -> String {
     if !payload.len().is_multiple_of(2) {
@@ -272,7 +295,7 @@ pub fn compute_srp_x(
     salt: &[u8],
 ) -> Result<SecretBigNum, ControlHandshakeError> {
     let mut cred_buf = Zeroizing::new(Vec::with_capacity(username.len() + 1 + password.len()));
-    cred_buf.extend_from_slice(username.as_bytes());
+    cred_buf.extend_from_slice(&encode_identity_le(username));
     cred_buf.push(b':');
     cred_buf.extend_from_slice(password.as_bytes());
     let h1 = Zeroizing::new(sha1(&cred_buf));
@@ -416,7 +439,7 @@ pub fn compute_srp_m1(
         h_xor[i] = h_n[i] ^ h_g[i];
     }
 
-    let h_i = sha1(username.as_bytes());
+    let h_i = sha1(&encode_identity_le(username));
 
     let mut buf = Zeroizing::new(Vec::new());
     buf.extend_from_slice(&h_xor);
@@ -858,9 +881,7 @@ impl ControlClientNegotiator {
                         ControlHandshakeError::CryptoError(format!("falha em mod_exp v: {e}"))
                     })?;
 
-                let k_bn = BigNum::from_u32(RADMIN_SRP_K).map_err(|e| {
-                    ControlHandshakeError::CryptoError(format!("falha em BN k: {e}"))
-                })?;
+                let k_bn = srp_k()?;
                 let mut kv = SecretBigNum::new()?;
                 kv.mod_mul(&k_bn, &v, &prime_n, &mut ctx).map_err(|e| {
                     ControlHandshakeError::CryptoError(format!("falha em mod_mul kv: {e}"))
@@ -1280,9 +1301,7 @@ impl ControlServerSession {
 
                 let b_secret = random_srp_exponent(&prime_n)?;
 
-                let k_bn = BigNum::from_u32(RADMIN_SRP_K).map_err(|e| {
-                    ControlHandshakeError::CryptoError(format!("falha em BN k: {e}"))
-                })?;
+                let k_bn = srp_k()?;
                 let mut kv = SecretBigNum::new()?;
                 kv.mod_mul(&k_bn, &v, &prime_n, &mut ctx)
                     .map_err(|e| ControlHandshakeError::CryptoError(format!("falha em kv: {e}")))?;
@@ -1552,11 +1571,65 @@ mod tests {
     }
 
     #[test]
+    fn test_identity_le_ascii() {
+        assert_eq!(encode_identity_le("A"), vec![0x41, 0x00]);
+        assert_eq!(encode_identity("A"), vec![0x00, 0x41]);
+    }
+
+    #[test]
+    fn test_identity_le_accented() {
+        assert_eq!(
+            encode_identity_le("José"),
+            vec![0x4a, 0x00, 0x6f, 0x00, 0x73, 0x00, 0xe9, 0x00]
+        );
+        assert_eq!(
+            encode_identity("José"),
+            vec![0x00, 0x4a, 0x00, 0x6f, 0x00, 0x73, 0x00, 0xe9]
+        );
+    }
+
+    #[test]
+    fn test_identity_le_non_bmp_surrogate_pair() {
+        assert_eq!(
+            encode_identity_le("\u{1f600}"),
+            vec![0x3d, 0xd8, 0x00, 0xde]
+        );
+        assert_eq!(encode_identity("\u{1f600}"), vec![0xd8, 0x3d, 0xde, 0x00]);
+        assert_eq!(decode_identity(&encode_identity("\u{1f600}")), "\u{1f600}");
+    }
+
+    #[test]
+    fn test_identity_le_empty() {
+        assert_eq!(encode_identity_le(""), Vec::<u8>::new());
+        assert_eq!(encode_identity(""), Vec::<u8>::new());
+    }
+
+    #[test]
+    fn test_identity_le_differs_from_be_for_non_ascii() {
+        let le = encode_identity_le("José");
+        let be = encode_identity("José");
+        assert_ne!(le, be);
+        assert_eq!(le.len(), be.len());
+    }
+
+    #[test]
     fn test_srp_group_parameters() {
         let n = get_srp_prime_n().unwrap();
         assert_eq!(n.num_bits(), 1536);
         assert_eq!(RADMIN_SRP_GENERATOR, 5);
-        assert_eq!(RADMIN_SRP_K, 3);
+        // k = SHA-1(N || PAD192(g)) - verifica que é diferente de k=3 (legacy SRP-6)
+        let expected_k_bytes = {
+            let mut input = n.to_vec();
+            let g_padded = {
+                let mut pad = vec![0u8; RADMIN_SRP1536_MODULUS_LEN - 1];
+                pad.push(RADMIN_SRP_GENERATOR);
+                pad
+            };
+            input.extend_from_slice(&g_padded);
+            sha1(&input)
+        };
+        let k_from_rust = srp_k().unwrap();
+        assert_eq!(expected_k_bytes.to_vec(), k_from_rust.to_vec());
     }
 
     #[test]
@@ -2393,5 +2466,139 @@ mod tests {
             retry2,
             Err(ControlHandshakeError::InvalidState(_))
         ));
+    }
+
+    #[test]
+    fn test_m1_identity_ascii() {
+        let n = get_srp_prime_n().unwrap();
+        let n_bytes = n.to_vec();
+        let salt = [0x01u8; 16];
+        let a = [0x02u8; 192];
+        let b = [0x03u8; 192];
+        let k = compute_srp_kdf(&[0x04u8; 192]);
+
+        let h_i = sha1(&[0x41u8, 0x00u8]);
+        let h_n = sha1(&n_bytes);
+        let h_g = sha1(&[RADMIN_SRP_GENERATOR]);
+        let mut h_xor = [0u8; 20];
+        for i in 0..20 {
+            h_xor[i] = h_n[i] ^ h_g[i];
+        }
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&h_xor);
+        buf.extend_from_slice(&h_i);
+        buf.extend_from_slice(&salt);
+        buf.extend_from_slice(&a);
+        buf.extend_from_slice(&b);
+        buf.extend_from_slice(&k);
+        let expected = sha1(&buf);
+
+        let m1 = compute_srp_m1(&n_bytes, RADMIN_SRP_GENERATOR, "A", &salt, &a, &b, &k);
+        assert_eq!(m1, expected);
+    }
+
+    #[test]
+    fn test_m1_identity_accented() {
+        let n = get_srp_prime_n().unwrap();
+        let n_bytes = n.to_vec();
+        let salt = [0x01u8; 16];
+        let a = [0x02u8; 192];
+        let b = [0x03u8; 192];
+        let k = compute_srp_kdf(&[0x04u8; 192]);
+
+        let h_i = sha1(&[0x4au8, 0x00, 0x6fu8, 0x00, 0x73u8, 0x00, 0xe9u8, 0x00]);
+        let h_n = sha1(&n_bytes);
+        let h_g = sha1(&[RADMIN_SRP_GENERATOR]);
+        let mut h_xor = [0u8; 20];
+        for i in 0..20 {
+            h_xor[i] = h_n[i] ^ h_g[i];
+        }
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&h_xor);
+        buf.extend_from_slice(&h_i);
+        buf.extend_from_slice(&salt);
+        buf.extend_from_slice(&a);
+        buf.extend_from_slice(&b);
+        buf.extend_from_slice(&k);
+        let expected = sha1(&buf);
+
+        let m1 = compute_srp_m1(&n_bytes, RADMIN_SRP_GENERATOR, "José", &salt, &a, &b, &k);
+        assert_eq!(m1, expected);
+    }
+
+    #[test]
+    fn test_m1_identity_non_bmp() {
+        let n = get_srp_prime_n().unwrap();
+        let n_bytes = n.to_vec();
+        let salt = [0x01u8; 16];
+        let a = [0x02u8; 192];
+        let b = [0x03u8; 192];
+        let k = compute_srp_kdf(&[0x04u8; 192]);
+
+        let h_i = sha1(&[0x3du8, 0xd8, 0x00u8, 0xde]);
+        let h_n = sha1(&n_bytes);
+        let h_g = sha1(&[RADMIN_SRP_GENERATOR]);
+        let mut h_xor = [0u8; 20];
+        for i in 0..20 {
+            h_xor[i] = h_n[i] ^ h_g[i];
+        }
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&h_xor);
+        buf.extend_from_slice(&h_i);
+        buf.extend_from_slice(&salt);
+        buf.extend_from_slice(&a);
+        buf.extend_from_slice(&b);
+        buf.extend_from_slice(&k);
+        let expected = sha1(&buf);
+
+        let m1 = compute_srp_m1(
+            &n_bytes,
+            RADMIN_SRP_GENERATOR,
+            "\u{1f600}",
+            &salt,
+            &a,
+            &b,
+            &k,
+        );
+        assert_eq!(m1, expected);
+    }
+
+    #[test]
+    fn test_m1_identity_empty() {
+        let n = get_srp_prime_n().unwrap();
+        let n_bytes = n.to_vec();
+        let salt = [0x01u8; 16];
+        let a = [0x02u8; 192];
+        let b = [0x03u8; 192];
+        let k = compute_srp_kdf(&[0x04u8; 192]);
+
+        let h_i = sha1(&[] as &[u8]);
+        let h_n = sha1(&n_bytes);
+        let h_g = sha1(&[RADMIN_SRP_GENERATOR]);
+        let mut h_xor = [0u8; 20];
+        for i in 0..20 {
+            h_xor[i] = h_n[i] ^ h_g[i];
+        }
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&h_xor);
+        buf.extend_from_slice(&h_i);
+        buf.extend_from_slice(&salt);
+        buf.extend_from_slice(&a);
+        buf.extend_from_slice(&b);
+        buf.extend_from_slice(&k);
+        let expected = sha1(&buf);
+
+        let m1 = compute_srp_m1(&n_bytes, RADMIN_SRP_GENERATOR, "", &salt, &a, &b, &k);
+        assert_eq!(m1, expected);
+    }
+
+    #[test]
+    fn test_m1_identity_wire_be_preserved() {
+        assert_eq!(encode_identity("A"), vec![0x00, 0x41]);
+        assert_eq!(
+            encode_identity("José"),
+            vec![0x00, 0x4a, 0x00, 0x6f, 0x00, 0x73, 0x00, 0xe9]
+        );
+        assert_eq!(encode_identity("\u{1f600}"), vec![0xd8, 0x3d, 0xde, 0x00]);
     }
 }

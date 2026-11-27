@@ -10,12 +10,12 @@ pub use control::{
 pub use control_handshake::{ControlServerSession, ControlServerState};
 
 pub use control_handshake::{
-    decode_identity, decode_items, encode_identity, encode_item, find_item, get_srp_prime_n,
-    ControlClientNegotiator, ControlClientState, ControlHandshakeError, ControlItem,
-    ControlStepOutput, CONTROL_SESSION_KEY_SIZE, RADMIN_SRP1536_MODULUS_LEN,
-    RADMIN_SRP1536_PRIME_HEX, RADMIN_SRP_DIGEST_LEN, RADMIN_SRP_GENERATOR, RADMIN_SRP_K,
-    RADMIN_SRP_KDF_KEY_LEN, SHELPER_PROTOCOL_VERSION, TAG_GENERATOR, TAG_IDENTITY, TAG_MODULUS,
-    TAG_PROOF, TAG_PUBLIC_EPHEMERAL, TAG_SALT, TAG_STEP,
+    decode_identity, decode_items, encode_identity, encode_identity_le, encode_item, find_item,
+    get_srp_prime_n, srp_k, ControlClientNegotiator, ControlClientState, ControlHandshakeError,
+    ControlItem, ControlStepOutput, CONTROL_SESSION_KEY_SIZE, RADMIN_SRP1536_MODULUS_LEN,
+    RADMIN_SRP1536_PRIME_HEX, RADMIN_SRP_DIGEST_LEN, RADMIN_SRP_GENERATOR, RADMIN_SRP_KDF_KEY_LEN,
+    SHELPER_PROTOCOL_VERSION, TAG_GENERATOR, TAG_IDENTITY, TAG_MODULUS, TAG_PROOF,
+    TAG_PUBLIC_EPHEMERAL, TAG_SALT, TAG_STEP,
 };
 pub use handshake::{
     HandshakeError, HandshakeNegotiator, HandshakeStage, HandshakeStepOutput, RSessionServer,

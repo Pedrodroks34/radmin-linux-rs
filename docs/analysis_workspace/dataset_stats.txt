@@ -1,0 +1,13 @@
+=== Listing dir stats ===
+Total .asm files: 6904
+Total bytes: 19209691
+Smallest file: 45 bytes
+Largest file: 1064762 bytes
+Total instruction lines: 355346
+=== Address range ===
+00401020
+00516f35
+=== Atomic instructions ===
+LOCK: 4909
+CMPXCHG: 2328
+XADD: 1954

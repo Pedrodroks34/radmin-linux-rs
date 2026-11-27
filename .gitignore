@@ -17,6 +17,7 @@
 # Local reverse engineering backups
 /backup/
 
+ghidra_export/
 # OpenCode Swarm runtime and planning state
 .swarm/*
 
@@ -42,3 +43,17 @@
 
 # Local Claude handoff artifacts
 /claude-handoff/
+
+# Local reverse-engineering scratch scripts and dumps
+/analyze_*.py
+/extract_*.py
+/find_*.py
+/find_*.java
+/inspect_*.py
+/srp_validation.py
+/tools_find_*.py
+/ghidra_*.txt
+/ghidra_work_rol/
+/ghidra_work_rol2/
+/e220
+/e280

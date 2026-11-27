@@ -1,0 +1,32 @@
+listing .asm files: 6904  (non-.asm entries: [])
+functions.jsonl lines: 6904  parsed: 6904  parse failures: 0
+duplicate function entries: NONE
+duplicate function names: {'thunk_FUN_00478a50': 8, "`scalar_deleting_destructor'": 31, 'thunk_FUN_0047a000': 2, 'operator!=': 4, 'thunk_FUN_00483700': 2, 'thunk_FUN_00484470': 2, 'thunk_FUN_00466a80': 2, 'GetACP': 2, 'thunk_FUN_004784c0': 2, 'operator=': 4, 'do_tolower': 2, 'do_toupper': 2, 'equivalent': 2, 'xsputn': 2, '___uncaught_exception': 2, 'thunk_FUN_004eb266': 2, '_com_error': 2, 'construct_from_string_literal': 2, 'try_get_first_available_module': 2, 'try_get_function': 2, 'operator()<>': 2, 'type_case_integer_parse_into_buffer<>': 8, 'operator()': 15, 'find_next_state': 4, 'parse_int_from_format_string': 4, 'process': 6, 'state_case_flag': 4, 'state_case_normal': 4, 'state_case_normal_common': 4, 'state_case_normal_tchar': 2, 'state_case_precision': 4, 'state_case_size': 4, 'state_case_type': 4, 'state_case_width': 4, 'type_case_Z': 4, 'type_case_a': 4, 'type_case_c_tchar': 4, 'type_case_integer': 4, 'type_case_n': 4, 'type_case_o': 4, 'type_case_p': 4, 'type_case_s': 4, 'type_case_s_compute_narrow_string_length': 2, 'validate': 12, 'validate_and_update_state_at_end_of_format_string': 2, 'write_character': 3, 'write_character_without_count_update': 2, 'write_stored_string_tchar': 4, 'write_string': 4, 'write_string_impl': 2, 'FID_conflict:___stdio_common_vfprintf': 2, 'make_input_adapter_character_source<>': 2, 'parse_floating_point<>': 4, 'process_floating_point_specifier_t<>': 2, 'process_string_specifier_tchar<char>': 2, 'process_string_specifier_tchar<wchar_t>': 2, 'write_floating_point<>': 2, 'input_adapter_character_source<>': 2, 'FID_conflict:operator()': 6, 'advance': 2, 'get': 3, 'invert': 2, 'is_character_allowed_in_string': 2, 'length': 2, 'process_conversion_specifier': 2, 'process_floating_point_specifier': 2, 'process_integer_specifier': 2, 'process_literal_character': 2, 'process_state': 2, 'process_string_specifier': 2, 'process_whitespace': 2, 'restore_state': 2, 'scan_conversion_specifier': 2, 'scan_optional_field_width': 2, 'scan_optional_length_modifier': 2, 'scan_optional_wide_modifier': 2, 'scan_scanset_range': 2, 'set_wide_for_c_s_or_scanset': 2, 'unget': 6, 'write_integer': 2, '_memcpy_s': 4, 'make_c_string_character_source<>': 2, 'allocate': 4, 'common_get_or_create_environment_nolock<char>': 2, 'common_initialize_environment_nolock<char>': 2, 'free_environment<>': 2, 'uninitialize<>': 2, 'uninitialize_environment_internal<>': 2, '__crt_fast_encode_pointer<>': 2, 'FID_conflict:__acrt_stdio_parse_mode_b': 2, '_GetPrimaryLen': 2, '_ProcessCodePage': 2, '_TestDefaultCountry': 2, '_TranslateName': 2, 'to_abstract_control': 2}
+null entries: 0
+listings expected from functions.jsonl: 6904
+missing listing files: NONE
+extra listing files without functions.jsonl entry: NONE
+function entry VA range: 00401020 .. 00516f35
+instruction lines counted: 355346
+instruction VA range: 00401020 .. 00516f3a
+calling conventions: {'__stdcall': 1162, '__cdecl': 1294, '__thiscall': 2996, '__fastcall': 1429, 'unknown': 23}
+unknown-convention function entries (23): 0041a570, 00498fe0, 004aec83, 004aec89, 004aec8f, 004e6f05, 004e6f0b, 004e6f11, 004e6f17, 004e6f1d, 004e6f23, 004e6f29, 004e6f2f, 004e6f35, 004e6f3b, 004e6f41, 004e6f47, 004e6f4d, 004e6f53, 004e6f59, 004e6f5f, 004e6f65, 004e6f6b
+decompile failures (1): [('00498fe0', 'Exception while decompiling 00498fe0: process: timeout\n')]
+thunks: 91
+thunk calling conventions: {'__fastcall': 56, 'unknown': 22, '__stdcall': 9, '__cdecl': 4}
+externals: 0
+references.jsonl records: 152681  parse failures: 0
+exact-duplicate reference lines: 0 extra copies in 0 distinct duplicated lines
+missing required keys: NONE
+reference types: {'DATA': 33329, 'UNCONDITIONAL_CALL': 27770, 'WRITE': 21677, 'READ': 30661, 'READ_WRITE': 788, 'CONDITIONAL_JUMP': 28189, 'UNCONDITIONAL_JUMP': 4436, 'COMPUTED_CALL': 5075, 'COMPUTED_JUMP': 720, 'INDIRECTION': 31, 'EXTERNAL': 1, 'COMPUTED_CALL_TERMINATOR': 3, 'PARAM': 1}
+reference directions: {'incoming_to_function_entry': 17662, 'outgoing_from_function': 135019}
+is_call=true records: 32848
+
+metadata.json comparison:
+  functions_total: meta=6904 observed=6904
+  functions_processed: meta=6904
+  decompile_failures: meta=1 observed=1
+  instructions_exported: meta=355346 observed=355346
+  unique_references_exported: meta=152681 records_observed=152681 exact_duplicate_lines=0
+  image_base: meta=00400000
+  partial_export: meta=False
