@@ -120,4 +120,7 @@ This project is not affiliated with, endorsed by, or supported by Famatech Corp.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the GNU General Public License
+v3.0 only (GPL-3.0-only).
+
+See [LICENSE](LICENSE) for the full license text.
